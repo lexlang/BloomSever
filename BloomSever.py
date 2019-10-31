@@ -7,15 +7,15 @@ from flask import Flask, request,jsonify
 
 bloomStore={}
 lock = threading.Lock() #锁
-app = Flask(__name__)
+application = Flask(__name__)
 
-@app.route('/check', methods=['GET'])
+@application.route('/check', methods=['GET'])
 def check():
     store = request.values.get('store')
     value = request.values.get('value')
     return jsonify({"access":"success","check":checkExists(store,value)})
 
-@app.route('/add', methods=['GET'])
+@application.route('/add', methods=['GET'])
 def add():
     store = request.values.get('store')
     value = request.values.get('value')
@@ -26,7 +26,7 @@ def add():
         addBloom(store, value)
     return jsonify({"access":"add_success"})
 
-@app.route('/remove', methods=['GET'])
+@application.route('/remove', methods=['GET'])
 def remove():
     store = request.values.get('store')
     removeKeyBloom(store)
@@ -105,9 +105,10 @@ def schedule():
         except Exception:
             pass
 
+threading.Thread(target=schedule, name='schedule').start()
+if os.path.exists("bloomStore.pkl"):
+    print("文件存在加载")
+    load()
+
 if __name__=="__main__":
-    threading.Thread(target=schedule, name='schedule').start()
-    if os.path.exists("bloomStore.pkl"):
-        print("文件存在加载")
-        load()
-    app.run(host='0.0.0.0', port=8080, debug=False, use_reloader=False)
+    application.run(host='0.0.0.0', port=8080, debug=False, use_reloader=False)
