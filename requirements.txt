@@ -1,2 +1,2 @@
 bloom-filter==1.3
-Flask==1.1.1
+Flask==2.3.2
